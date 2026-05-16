@@ -1,0 +1,936 @@
+/* --- Root Variables & Reset --- */
+:root {
+    --primary-green: #71a32a;
+    --hover-green: #5d8a22;
+    --bg-gray: #f4f6f8;
+    --text-dark: #333;
+    --text-muted: #888;
+    --border-color: #e0e0e0;
+    --white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-gray);
+    color: var(--text-dark);
+    overflow: hidden; /* Menghindari double scrollbar pada layout utama */
+}
+
+/* --- Layout Container --- */
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- SIDEBAR STYLES --- */
+.sidebar {
+    width: 260px;
+    background: var(--white);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 35px;
+}
+
+.icon-cart {
+    background: var(--primary-green);
+    color: var(--white);
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 20px;
+}
+
+.brand strong {
+    color: var(--primary-green);
+    font-size: 18px;
+    display: block;
+}
+
+.brand small {
+    color: var(--text-muted);
+}
+
+.menu {
+    flex: 1;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #555;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.menu a:hover {
+    background: #f9f9f9;
+}
+
+.menu a.active {
+    background: #f0f7e6;
+    color: var(--primary-green);
+    font-weight: bold;
+}
+
+.logout {
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.logout a {
+    text-decoration: none;
+    color: #e74c3c;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* --- MAIN CONTENT AREA --- */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    background: var(--white);
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.top-bar .title h1 {
+    font-size: 22px;
+    color: var(--text-dark);
+}
+
+.top-bar .title p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.user-info {
+    background: #f8f9fa;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    border: 1px solid #eee;
+    font-weight: 600;
+}
+
+/* --- ADMIN DASHBOARD STYLES --- */
+.search-section input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: #f9f9f9;
+    margin-bottom: 20px;
+    outline: none;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.filter-bar a {
+    text-decoration: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    color: #666;
+}
+
+.filter-bar a.btn-active {
+    background: var(--primary-green);
+    color: var(--white);
+    border-color: var(--primary-green);
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    border: 1px solid #eee;
+    padding: 20px;
+    border-radius: 15px;
+    position: relative;
+    transition: 0.3s;
+}
+
+.card:hover {
+    border-color: var(--primary-green);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.price {
+    color: var(--primary-green);
+    font-weight: bold;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.stock {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.add-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary-green);
+    color: var(--white);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* --- MANAJEMEN BARANG STYLES --- */
+.action-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.table-filters {
+    display: flex;
+    gap: 10px;
+}
+
+.table-filters select, .table-filters input {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+}
+
+.btn-excel {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-add {
+    background: var(--primary-green);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.table-container {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.data-table th {
+    background: #fcfcfc;
+    padding: 15px;
+    text-align: left;
+    color: #777;
+    border-bottom: 2px solid #f4f4f4;
+}
+
+.data-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.badge-active {
+    background: #eef9f1;
+    color: var(--primary-green);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.btn-icon {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+.btn-icon.delete { color: #e74c3c; }
+
+.btn-icon.stock {
+    color: var(--primary-green);
+    font-weight: 700;
+}
+
+/* --- MODAL STYLES --- */
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none; /* Diatur via JS */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: var(--white);
+    width: 600px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.modal-header h2 { font-size: 20px; }
+
+.modal-header .close {
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+}
+
+.modal-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.modal-form .full {
+    grid-column: span 2;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-batal {
+    flex: 1;
+    padding: 12px;
+    background: var(--white);
+    color: var(--primary-green);
+    border: 1px solid var(--primary-green);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-simpan {
+    flex: 1;
+    padding: 12px;
+    background: var(--primary-green);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+/* Pastikan filter-bar ada di dalam main-content agar tidak melayang ke atas */
+.filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Supaya kalau kategori banyak, dia otomatis turun ke baris baru */
+}
+
+.filter-bar a {
+    text-decoration: none;
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    color: #666;
+    font-size: 13px;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.filter-bar a.btn-active {
+    background: #71a32a;
+    color: white;
+    border-color: #71a32a;
+}
+
+/* Layout App Container */
+.app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden; /* Mencegah scroll di luar area utama */
+}
+
+.main-content {
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto; /* Scroll hanya di area konten */
+}
+
+
+/* Container Utama Riwayat */
+.transaction-container {
+    background: white;
+    border-radius: 24px; /* Membuat sudut sangat melengkung sesuai gambar */
+    padding: 30px;
+    margin-top: 20px;
+    border: 1px solid #f0f0f0;
+}
+
+.transaction-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 5px;
+}
+
+.transaction-header p {
+    font-size: 14px;
+    color: #636e72;
+    margin-bottom: 30px;
+}
+
+/* Tabel Modern */
+.table-modern {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 15px; /* Memberi jarak antar baris */
+}
+
+.table-modern th {
+    padding: 12px 20px;
+    text-align: left;
+    color: #b2bec3;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid #f5f6fa;
+}
+
+.table-modern td {
+    padding: 20px;
+    background: white;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+/* Badge untuk Kolom Item */
+.badge-item {
+    background: #f1f2f6;
+    color: #2d3436;
+    padding: 6px 16px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Status Lunas Hijau Muda */
+.status-lunas {
+    background: #f1f9f4; /* Hijau sangat muda */
+    color: #71a32a;     /* Hijau utama */
+    padding: 8px 20px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.text-success {
+    color: #71a32a !important;
+}
+
+.fw-bold { font-weight: 700; }
+.text-muted { color: #b2bec3; }
+
+
+/* LAPORAN STYLES */
+.report-toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.btn-filter, .btn-print {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-print { border-color: #71a32a; color: #71a32a; }
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #eee;
+}
+
+.stat-icon { font-size: 24px; padding: 10px; border-radius: 10px; }
+.purple .stat-icon { background: #f3e5f5; color: #9c27b0; }
+.blue .stat-icon { background: #e3f2fd; color: #2196f3; }
+.red .stat-icon { background: #ffebee; color: #f44336; }
+.green .stat-icon { background: #e8f5e9; color: #4caf50; }
+
+.stat-data span { font-size: 12px; color: #888; }
+.stat-data h3 { font-size: 16px; margin-top: 5px; }
+
+.chart-container {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+}
+
+.chart-header { display: flex; gap: 10px; margin-bottom: 20px; }
+.chart-header .tab {
+    padding: 8px 15px;
+    border: none;
+    background: #f5f5f5;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.chart-header .tab.active { background: #71a32a; color: white; }
+
+.bottom-charts {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+}
+
+.chart-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.pie-box { width: 200px; margin: 0 auto; }
+
+/* --- UI PENGELUARAN --- */
+.expense-banner {
+    background-color: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.banner-info span { font-size: 13px; color: #e53e3e; font-weight: 600; }
+.banner-info h2 { font-size: 26px; color: #e53e3e; margin-top: 5px; }
+.banner-count { color: #e53e3e; font-size: 14px; }
+
+/* Label Kategori Berwarna */
+.lbl-cat { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; color: white; display: inline-block; }
+.lbl-cat.orange { background-color: #d69e2e; }
+.lbl-cat.green { background-color: #38a169; }
+.lbl-cat.purple { background-color: #9f7aea; }
+.lbl-cat.blue { background-color: #3182ce; }
+
+.text-red { color: #e53e3e; font-weight: bold; }
+
+/* Tombol Khusus */
+.btn-outline-print { background: white; border: 1px solid #ddd; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-right: 10px; }
+.btn-add-primary { background: #71a32a; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+
+/* --- MODAL UPDATED STYLE --- */
+.modal-medium { width: 450px; padding: 25px; border-radius: 15px; }
+.modal-title-section h2 { font-size: 18px; color: #333; }
+.modal-title-section p { font-size: 13px; color: #888; margin-bottom: 15px; }
+
+.form-input { 
+    width: 100%; padding: 12px; border: 1px solid #e0e0e0; 
+    border-radius: 8px; background: #f9f9f9; font-size: 14px; 
+}
+.form-input:focus { border-color: #71a32a; outline: none; background: #fff; }
+
+.modal-footer-flex { display: flex; gap: 12px; margin-top: 20px; width: 100%; }
+.btn-batal-outline { 
+    flex: 1; padding: 12px; background: white; border: 1px solid #71a32a; 
+    color: #71a32a; border-radius: 8px; font-weight: bold; cursor: pointer;
+}
+.btn-simpan-full { 
+    flex: 1; padding: 12px; background: #71a32a; border: none; 
+    color: white; border-radius: 8px; font-weight: bold; cursor: pointer;
+}
+
+/* PENGELUARAN STYLES */
+.expense-banner {
+    background-color: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.banner-info span { font-size: 13px; color: #e53e3e; font-weight: 600; }
+.banner-info h2 { font-size: 24px; color: #e53e3e; margin-top: 5px; }
+.banner-count { color: #e53e3e; font-size: 14px; }
+
+/* Tombol Khusus Pengeluaran */
+.btn-outline-print {
+    background: white;
+    border: 1px solid #71a32a;
+    color: #71a32a;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-add-primary {
+    background: #71a32a;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Label Kategori (Pills) */
+.lbl-cat {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    display: inline-block;
+}
+.lbl-cat.orange { background-color: #d69e2e; }
+.lbl-cat.green { background-color: #38a169; }
+.lbl-cat.purple { background-color: #9f7aea; }
+.lbl-cat.blue { background-color: #3182ce; }
+
+.text-red { color: #e53e3e; font-weight: bold; }
+
+.table-tools {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.btn-filter-date {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+
+/* --- SETTINGS STYLES --- */
+.settings-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+.settings-nav {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #333;
+    gap: 15px;
+    border-bottom: 1px solid #f5f5f5;
+    transition: 0.3s;
+}
+
+.nav-item:hover { background: #f9f9f9; }
+.nav-item.active { background: #f1f9f4; border-left: 4px solid #71a32a; }
+
+.nav-icon { font-size: 20px; }
+.nav-text strong { font-size: 14px; }
+.nav-text small { color: #888; font-size: 12px; }
+
+.settings-content {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.content-header { margin-bottom: 25px; }
+.content-header h3 { font-size: 18px; margin-bottom: 5px; }
+.content-header p { color: #888; font-size: 13px; }
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f9f9f9;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.form-control:focus { border-color: #71a32a; outline: none; background: white; }
+
+.divider { border: none; border-top: 1px solid #eee; margin: 25px 0; }
+
+.form-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+.btn-reset {
+    padding: 10px 20px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-save {
+    padding: 10px 20px;
+    background: #71a32a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Sembunyikan tab yang tidak aktif */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Tampilkan tab yang aktif */
+.tab-content.active {
+    display: block;
+}
+
+/* Kursor pointer untuk menu navigasi */
+.nav-item {
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}
+
+.form-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.logout {
+    display: grid;
+}
+
+.logout button {
+    border: 0;
+    background: transparent;
+    color: #e74c3c;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+}
+
+.cart-panel {
+    width: 300px;
+    background: var(--white);
+    border-left: 1px solid var(--border-color);
+    padding: 30px 20px;
+    flex-shrink: 0;
+}
+
+.cart-title {
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.cart-empty {
+    min-height: 320px;
+    display: grid;
+    place-items: center;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.shadow-sm {
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.bg-light {
+    background: #f8fafc;
+}
+
+.content-wrapper {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.form-select-sm {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+}
+
+.table-footer-info {
+    margin-top: 14px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.account-avatar,
+.account-photo-preview {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+}
+
+.account-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef9f1;
+    color: var(--primary-green);
+    font-weight: 800;
+}
+
+.account-photo-preview {
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+}
+
+.photo-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.badge-role {
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.delete-confirmation {
+    display: grid;
+    gap: 18px;
+}
+
+.delete-confirmation p {
+    color: var(--text-dark);
+    font-size: 14px;
+}
+
+.btn-delete-full {
+    flex: 1;
+    padding: 12px;
+    background: #e53e3e;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
