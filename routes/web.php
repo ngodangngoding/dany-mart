@@ -1,24 +1,30 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthPreviewController;
 use App\Http\Controllers\KasirController;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', [KasirController::class, 'index'])->name('kasir.index');
+Route::get('/', [AuthPreviewController::class, 'showLogin'])->name('home');
+Route::get('/login-preview', [AuthPreviewController::class, 'showLogin'])->name('login.preview');
+Route::post('/login-preview', [AuthPreviewController::class, 'login'])->name('login.preview.store');
+Route::post('/logout-preview', [AuthPreviewController::class, 'logout'])->name('logout.preview');
 
-Route::get('/login-preview', function () {
-    return view('welcome');
-})->name('login.preview');
+Route::redirect('/dashboard-preview', '/kasir/dashboard')->name('kasir.dashboard.preview');
 
-Route::post('/login-preview', function () {
-    return redirect()->route('kasir.dashboard');
-})->name('login.preview.submit');
+Route::middleware('role.preview:kasir')->prefix('kasir')->name('kasir.')->group(function () {
+    Route::get('/dashboard', [KasirController::class, 'index'])->name('dashboard');
+    Route::get('/history', [KasirController::class, 'history'])->name('history');
+    Route::get('/profile', [KasirController::class, 'profile'])->name('profile');
+});
 
-Route::get('/dashboard-preview', [KasirController::class, 'index'])->name('kasir.dashboard');
-
-Route::post('/kasir/checkout', [KasirController::class, 'checkout'])->name('kasir.checkout');
-
-Route::post('/kasir/orders/{order}/recommendations/apply', [KasirController::class, 'applyRecommendations'])
-    ->name('kasir.recommendations.apply');
-
-Route::get('/kasir/history', [KasirController::class, 'history'])->name('kasir.history');
-Route::get('/kasir/profile', [KasirController::class, 'profile'])->name('kasir.profile');
+Route::middleware('role.preview:admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/barang', [AdminController::class, 'barang'])->name('barang');
+    Route::get('/riwayat', [AdminController::class, 'riwayat'])->name('riwayat');
+    Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
+    Route::get('/pengeluaran', [AdminController::class, 'pengeluaran'])->name('pengeluaran');
+    Route::get('/pengaturan', [AdminController::class, 'pengaturan'])->name('pengaturan');
+    Route::get('/manajemen-akun', [AdminController::class, 'manajemenAkun'])->name('manajemen-akun');
+    Route::get('/kategori', [AdminController::class, 'kategori'])->name('kategori');
+});

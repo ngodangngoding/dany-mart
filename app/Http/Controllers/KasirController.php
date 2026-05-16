@@ -18,17 +18,17 @@ class KasirController extends Controller
     {
         if ($this->isDatabaseReady(['products'])) {
             $products = Product::query()
-                ->select('id', 'name', 'sku', 'category', 'price', 'stock', 'sold_count')
+                ->select('id', 'name', 'category_id', 'selling_price', 'stock')
                 ->orderBy('name')
                 ->get();
 
             $categories = collect(['Semua produk'])
                 ->merge(
                     Product::query()
-                        ->whereNotNull('category')
+                        ->whereNotNull('category_id')
                         ->distinct()
-                        ->orderBy('category')
-                        ->pluck('category')
+                        ->orderBy('category_id')
+                        ->pluck('category_id')
                 )
                 ->values();
 
@@ -51,7 +51,7 @@ class KasirController extends Controller
 
     public function checkout(Request $request)
     {
-        if (! $this->isDatabaseReady(['products', 'orders', 'order_items'])) {
+        if (!$this->isDatabaseReady(['products', 'orders', 'order_items'])) {
             return $this->previewCheckout($request);
         }
 
@@ -91,7 +91,6 @@ class KasirController extends Controller
                 $order->items()->create([
                     'product_id' => $product->id,
                     'product_name' => $product->name,
-                    'sku' => $product->sku,
                     'price' => $product->price,
                     'qty' => $row['qty'],
                     'subtotal' => $lineSubtotal,
@@ -120,7 +119,7 @@ class KasirController extends Controller
 
     public function applyRecommendations(Request $request, $order)
     {
-        if (! $this->isDatabaseReady(['products', 'orders', 'order_items'])) {
+        if (!$this->isDatabaseReady(['products', 'orders', 'order_items'])) {
             return $this->previewApplyRecommendations($request, $order);
         }
 
@@ -147,7 +146,7 @@ class KasirController extends Controller
                 foreach ($productIds as $productId) {
                     $product = $products->get($productId);
 
-                    if (! $product || $product->stock < 1) {
+                    if (!$product || $product->stock < 1) {
                         continue;
                     }
 
@@ -163,7 +162,6 @@ class KasirController extends Controller
                         $order->items()->create([
                             'product_id' => $product->id,
                             'product_name' => $product->name,
-                            'sku' => $product->sku,
                             'price' => $product->price,
                             'qty' => 1,
                             'subtotal' => $product->price,
@@ -245,7 +243,6 @@ class KasirController extends Controller
                     'id' => $item->id,
                     'product_id' => $item->product_id,
                     'name' => $item->product_name,
-                    'sku' => $item->sku,
                     'price' => (int) $item->price,
                     'qty' => (int) $item->qty,
                     'subtotal' => (int) $item->subtotal,
@@ -260,7 +257,6 @@ class KasirController extends Controller
             return [
                 'id' => $product->id,
                 'name' => $product->name,
-                'sku' => $product->sku,
                 'price' => (int) $product->price,
                 'stock' => (int) $product->stock,
                 'sold_count' => (int) $product->sold_count,
@@ -275,7 +271,7 @@ class KasirController extends Controller
             DB::connection()->getPdo();
 
             foreach ($tables as $table) {
-                if (! Schema::hasTable($table)) {
+                if (!Schema::hasTable($table)) {
                     return false;
                 }
             }
@@ -289,13 +285,13 @@ class KasirController extends Controller
     protected function getPreviewProducts(): Collection
     {
         return collect([
-            ['id' => 1, 'name' => 'Piatos', 'sku' => 'BRG-0S1', 'BRG' => 'BRG-0S1', 'category' => 'Snack', 'price' => 12000, 'stock' => 120, 'sold_count' => 50],
-            ['id' => 2, 'name' => 'Pulpen', 'sku' => 'BRG-0S2', 'BRG' => 'BRG-0S2', 'category' => 'Alat Tulis Kantor', 'price' => 18000, 'stock' => 33, 'sold_count' => 15],
-            ['id' => 3, 'name' => 'Paracetamol', 'sku' => 'BRG-0B3', 'BRG' => 'BRG-0B3', 'category' => 'Medicine', 'price' => 15000, 'stock' => 32, 'sold_count' => 80],
-            ['id' => 4, 'name' => 'Le Mineral', 'sku' => 'BRG-0A1', 'BRG' => 'BRG-0A1', 'category' => 'Minuman', 'price' => 15000, 'stock' => 3, 'sold_count' => 99],
-            ['id' => 5, 'name' => 'Tehpucuk', 'sku' => 'BRG-001', 'BRG' => 'BRG-001', 'category' => 'Minuman', 'price' => 5000, 'stock' => 120, 'sold_count' => 85],
-            ['id' => 6, 'name' => 'Roma kelapa', 'sku' => 'BRG-002', 'BRG' => 'BRG-002', 'category' => 'Snack', 'price' => 8000, 'stock' => 81, 'sold_count' => 34],
-            ['id' => 7, 'name' => 'Kecap', 'sku' => 'BRG-003', 'BRG' => 'BRG-003', 'category' => 'Lainnya', 'price' => 8000, 'stock' => 32, 'sold_count' => 25],
+            ['id' => 1, 'name' => 'Piatos', 'BRG' => 'BRG-0S1', 'category' => 'Snack', 'price' => 12000, 'stock' => 120, 'sold_count' => 50],
+            ['id' => 2, 'name' => 'Pulpen', 'BRG' => 'BRG-0S2', 'category' => 'Alat Tulis Kantor', 'price' => 18000, 'stock' => 33, 'sold_count' => 15],
+            ['id' => 3, 'name' => 'Paracetamol', 'BRG' => 'BRG-0B3', 'category' => 'Medicine', 'price' => 15000, 'stock' => 32, 'sold_count' => 80],
+            ['id' => 4, 'name' => 'Le Mineral', 'BRG' => 'BRG-0A1', 'category' => 'Minuman', 'price' => 15000, 'stock' => 3, 'sold_count' => 99],
+            ['id' => 5, 'name' => 'Tehpucuk', 'BRG' => 'BRG-001', 'category' => 'Minuman', 'price' => 5000, 'stock' => 120, 'sold_count' => 85],
+            ['id' => 6, 'name' => 'Roma kelapa', 'BRG' => 'BRG-002', 'category' => 'Snack', 'price' => 8000, 'stock' => 81, 'sold_count' => 34],
+            ['id' => 7, 'name' => 'Kecap', 'BRG' => 'BRG-003', 'category' => 'Lainnya', 'price' => 8000, 'stock' => 32, 'sold_count' => 25],
         ])->map(function ($product) {
             $product['id'] = (int) $product['id'];
             $product['price'] = (int) $product['price'];
@@ -315,8 +311,7 @@ class KasirController extends Controller
                 return [
                     'id' => (int) $product['id'],
                     'name' => $product['name'],
-                    'sku' => $product['sku'] ?? ($product['BRG'] ?? '-'),
-                    'BRG' => $product['BRG'] ?? ($product['sku'] ?? '-'),
+                    'BRG' => $product['BRG'],
                     'category' => $product['category'] ?? 'Lainnya',
                     'price' => (int) $product['price'],
                     'stock' => (int) $product['stock'],
@@ -345,7 +340,7 @@ class KasirController extends Controller
 
             $product = $catalog->get($productId);
 
-            if (! $product) {
+            if (!$product) {
                 throw ValidationException::withMessages([
                     'items' => "Produk dengan ID {$productId} tidak ditemukan.",
                 ]);
@@ -365,7 +360,6 @@ class KasirController extends Controller
                     'id' => $productId,
                     'product_id' => $productId,
                     'name' => $product['name'],
-                    'sku' => $product['sku'],
                     'price' => $product['price'],
                     'qty' => $qty,
                     'subtotal' => $product['price'] * $qty,
@@ -416,7 +410,7 @@ class KasirController extends Controller
 
         $order = session('preview_order');
 
-        if (! $order || (string) $order['id'] !== (string) $orderId) {
+        if (!$order || (string) $order['id'] !== (string) $orderId) {
             return response()->json([
                 'message' => 'Order preview tidak ditemukan.',
             ], 404);
@@ -428,7 +422,6 @@ class KasirController extends Controller
                 'id' => $item['id'] ?? $item['product_id'],
                 'product_id' => (int) $item['product_id'],
                 'name' => $item['name'],
-                'sku' => $item['sku'] ?? '-',
                 'price' => (int) $item['price'],
                 'qty' => (int) $item['qty'],
                 'subtotal' => (int) $item['subtotal'],
@@ -439,7 +432,7 @@ class KasirController extends Controller
             $productId = (int) $productId;
             $product = $catalog->get($productId);
 
-            if (! $product || $product['stock'] < 1) {
+            if (!$product || $product['stock'] < 1) {
                 continue;
             }
 
@@ -453,7 +446,6 @@ class KasirController extends Controller
                     'id' => $productId,
                     'product_id' => $productId,
                     'name' => $product['name'],
-                    'sku' => $product['sku'],
                     'price' => $product['price'],
                     'qty' => 1,
                     'subtotal' => $product['price'],
@@ -477,7 +469,7 @@ class KasirController extends Controller
             'preview_order' => $order,
             'preview_products' => $catalog->values()->all(),
         ]);
-        
+
         $orders = session('preview_orders', []);
         $orders[$order['id']] = $order;
         session(['preview_orders' => $orders]);
@@ -492,7 +484,7 @@ class KasirController extends Controller
     {
         $orderedProductIds = collect($order['items'])
             ->pluck('product_id')
-            ->map(fn ($id) => (int) $id)
+            ->map(fn($id) => (int) $id)
             ->values();
 
         $orderedCategories = $catalog
@@ -507,7 +499,7 @@ class KasirController extends Controller
                 return $items->whereIn('category', $orderedCategories);
             })
             ->whereNotIn('id', $orderedProductIds)
-            ->filter(fn ($product) => (int) $product['stock'] > 0)
+            ->filter(fn($product) => (int) $product['stock'] > 0)
             ->sortByDesc('sold_count')
             ->take(2)
             ->values();
@@ -515,7 +507,7 @@ class KasirController extends Controller
         if ($relevant->count() < 2) {
             $fallback = $catalog
                 ->whereNotIn('id', $orderedProductIds->merge($relevant->pluck('id'))->all())
-                ->filter(fn ($product) => (int) $product['stock'] > 0)
+                ->filter(fn($product) => (int) $product['stock'] > 0)
                 ->sortByDesc('sold_count')
                 ->take(2 - $relevant->count())
                 ->values();
@@ -529,7 +521,6 @@ class KasirController extends Controller
                 return [
                     'id' => (int) $product['id'],
                     'name' => $product['name'],
-                    'sku' => $product['sku'],
                     'price' => (int) $product['price'],
                     'stock' => (int) $product['stock'],
                     'sold_count' => (int) $product['sold_count'],
@@ -553,7 +544,7 @@ class KasirController extends Controller
     public function profile()
     {
         // Mocked or static kasir user for demonstration as requested
-        $user = auth()->user() ?? (object)[
+        $user = auth()->user() ?? (object) [
             'name' => 'Kasir Utama',
             'email' => 'kasir@danymart.com',
             'usercode' => 'KSR-001'
