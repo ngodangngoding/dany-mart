@@ -1,5 +1,5 @@
 (function () {
-    const products = [
+    const fallbackProducts = [
         { id: 1, name: "Piatos", category: "Snack", price: 12000, stock: 120, soldCount: 50 },
         { id: 2, name: "Pulpen", category: "Alat Tulis Kantor", price: 18000, stock: 33, soldCount: 15 },
         { id: 3, name: "Paracetamol", category: "Medicine", price: 15000, stock: 32, soldCount: 80 },
@@ -8,6 +8,15 @@
         { id: 6, name: "Roma Kelapa", category: "Snack", price: 8000, stock: 81, soldCount: 34 },
         { id: 7, name: "Kecap", category: "Lainnya", price: 8000, stock: 32, soldCount: 25 },
     ];
+    const products = (window.posProducts?.length ? window.posProducts : fallbackProducts).map((product) => ({
+        id: Number(product.id),
+        name: product.name || "Produk",
+        sku: product.sku || product.code || `BRG-${product.id}`,
+        category: product.category || "Lainnya",
+        price: Number(product.price || product.selling_price || 0),
+        stock: Number(product.stock || 0),
+        soldCount: Number(product.soldCount || product.sold_count || 0),
+    }));
 
     let cart = [];
     let activeCategory = "Semua produk";
@@ -353,18 +362,45 @@
         openModal("[data-confirmation-modal]");
     }
 
-    function completePayment() {
+    async function completePayment() {
         const input = document.querySelector("[data-payment-amount]");
         const paid = Number(input?.value || 0);
         const snapshot = cart.map((item) => ({ ...item }));
         const total = subtotal();
 
-        closeModal("[data-confirmation-modal]");
-        closeModal("[data-payment-modal]");
-        showSuccess(snapshot, total, selectedPaymentMethod, paid);
+        try {
+            const response = await fetch(window.posConfig?.checkoutUrl || "/kasir/orders", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN": window.posConfig?.csrfToken || document.querySelector('meta[name="csrf-token"]')?.content || "",
+                },
+                body: JSON.stringify({
+                    payment_method: selectedPaymentMethod,
+                    payment_amount: selectedPaymentMethod === "QRIS" ? total : paid,
+                    items: cart.map((item) => ({
+                        product_id: item.id,
+                        quantity: item.qty,
+                    })),
+                }),
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok) {
+                throw new Error(payload.message || "Pembayaran gagal diproses.");
+            }
+
+            closeModal("[data-confirmation-modal]");
+            closeModal("[data-payment-modal]");
+            showSuccess(snapshot, total, selectedPaymentMethod, selectedPaymentMethod === "QRIS" ? total : paid, payload.receipt_url);
+        } catch (error) {
+            window.alert(error.message || "Pembayaran gagal diproses.");
+        }
     }
 
-    function showSuccess(items, total, method, paid) {
+    function showSuccess(items, total, method, paid, receiptUrl) {
         const receiptItems = document.querySelector("[data-success-items]");
         const totalTarget = document.querySelector("[data-success-total]");
         const paidTarget = document.querySelector("[data-success-paid]");
@@ -392,6 +428,9 @@
         const cash = method === "Tunai";
         paidRow?.classList.toggle("hidden", !cash);
         changeRow?.classList.toggle("hidden", !cash);
+        const shareButton = document.querySelector("[data-share-receipt]");
+        if (shareButton && receiptUrl) shareButton.dataset.receiptUrl = receiptUrl;
+
         openModal("[data-success-modal]");
         showToast("Pembayaran berhasil");
     }
@@ -430,8 +469,11 @@
                 closeModal("[data-success-modal]");
                 clearCart();
             }
-            if (button.matches("[data-history-link]")) window.location.href = "/kasir/history";
-            if (button.matches("[data-share-receipt]")) window.alert("Fitur share struk versi statis belum mengirim data.");
+            if (button.matches("[data-history-link]")) window.location.href = window.posConfig?.historyUrl || "/kasir/history";
+            if (button.matches("[data-share-receipt]")) {
+                if (button.dataset.receiptUrl) window.location.href = button.dataset.receiptUrl;
+                else window.alert("Struk belum tersedia.");
+            }
             if (button.matches("[data-close-recommendation]")) finishRecommendations(false);
             if (button.matches("[data-accept-recommendation]")) finishRecommendations(true);
             if (button.matches("[data-skip-recommendation]")) finishRecommendations(false);

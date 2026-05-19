@@ -4,10 +4,20 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Dashboard Kasir</title>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet">
         <link rel="stylesheet" href="/css/admin.css">
         <link rel="stylesheet" href="/css/kasir-static.css">
+        <script>
+            window.posProducts = @json($products);
+            window.posConfig = {
+                csrfToken: @json(csrf_token()),
+                checkoutUrl: @json(route('kasir.orders.store')),
+                calculateUrl: @json(route('kasir.orders.calculate')),
+                historyUrl: @json(route('kasir.history'))
+            };
+        </script>
         <script src="/js/kasir-static.js" defer></script>
     </head>
     <body class="dashboard-shell">

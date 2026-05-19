@@ -18,6 +18,18 @@
                             <p>Daftar semua transaksi yang telah selesai</p>
                         </div>
 
+                        <form class="table-tools" method="GET" action="{{ route('admin.riwayat') }}">
+                            <div class="table-filters">
+                                <input type="text" name="search" value="{{ $search }}" placeholder="Cari order ID...">
+                                <select name="payment_method">
+                                    <option value="">Semua metode</option>
+                                    <option value="Tunai" {{ $paymentMethod === 'Tunai' ? 'selected' : '' }}>Tunai</option>
+                                    <option value="QRIS" {{ $paymentMethod === 'QRIS' ? 'selected' : '' }}>QRIS</option>
+                                </select>
+                                <button class="btn-filter-date" type="submit">Filter</button>
+                            </div>
+                        </form>
+
                         <div class="table-responsive">
                             <table class="table-modern">
                                 <thead>
@@ -28,44 +40,36 @@
                                         <th>Total Tagihan</th>
                                         <th>Metode Bayar</th>
                                         <th>Status</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="fw-bold">PREVIEW-20260421162334</td>
-                                        <td class="text-muted">22/12/2025 12:00</td>
-                                        <td><span class="badge-item">1 Item</span></td>
-                                        <td class="fw-bold text-success">Rp 18.000</td>
-                                        <td>Tunai</td>
-                                        <td><span class="status-lunas">Lunas</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">PREVIEW-20260421161506</td>
-                                        <td class="text-muted">22/12/2025 14:00</td>
-                                        <td><span class="badge-item">1 Item</span></td>
-                                        <td class="fw-bold text-success">Rp 12.000</td>
-                                        <td>QRIS</td>
-                                        <td><span class="status-lunas">Lunas</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">PREVIEW-20260421161151</td>
-                                        <td class="text-muted">22/12/2025 14:55</td>
-                                        <td><span class="badge-item">1 Item</span></td>
-                                        <td class="fw-bold text-success">Rp 15.000</td>
-                                        <td>QRIS</td>
-                                        <td><span class="status-lunas">Lunas</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">PREVIEW-202604211103</td>
-                                        <td class="text-muted">22/12/2025 15:30</td>
-                                        <td><span class="badge-item">4 Item</span></td>
-                                        <td class="fw-bold text-success">Rp 50.000</td>
-                                        <td>Tunai</td>
-                                        <td><span class="status-lunas">Lunas</span></td>
-                                    </tr>
+                                    @forelse ($orders as $order)
+                                        <tr>
+                                            <td class="fw-bold">{{ $order->order_number }}</td>
+                                            <td class="text-muted">{{ $order->created_at->format('d/m/Y H:i') }}</td>
+                                            <td><span class="badge-item">{{ $order->items->sum('quantity') }} Item</span></td>
+                                            <td class="fw-bold text-success">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                            <td>{{ $order->payment_method }}</td>
+                                            <td><span class="status-lunas">Lunas</span></td>
+                                            <td>
+                                                <a class="btn-reset-link" href="{{ route('admin.orders.receipt', $order->id) }}">Struk</a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="empty-table">Belum ada transaksi.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
+
+                        @if ($orders->hasPages())
+                            <div class="table-footer-info">
+                                {{ $orders->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </main>

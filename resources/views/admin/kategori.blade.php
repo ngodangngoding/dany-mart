@@ -1,12 +1,3 @@
-@php
-    $categories = [
-        ['id' => 1, 'nama' => 'Makanan', 'deskripsi' => 'Kategori untuk produk makanan ringan dan berat'],
-        ['id' => 2, 'nama' => 'Minuman', 'deskripsi' => 'Kategori untuk berbagai jenis minuman'],
-        ['id' => 3, 'nama' => 'Alat Tulis', 'deskripsi' => 'Kategori untuk perlengkapan kantor dan sekolah'],
-        ['id' => 4, 'nama' => 'Kebutuhan Rumah Tangga', 'deskripsi' => 'Kategori untuk sabun, detergen, dan lainnya'],
-    ];
-@endphp
-
 <!DOCTYPE html>
 <html lang="id">
 
@@ -25,10 +16,28 @@
         <main class="main-content">
             @include('layout.admin-topbar', ['title' => 'Admin', 'subtitle' => 'Manajemen Kategori', 'user' => 'Dimsum (Admin)'])
 
-            <div class="action-header">
-                <div class="table-filters">
-                    <input type="text" placeholder="Cari kategori...">
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-error">{{ session('error') }}</div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-error">
+                    {{ $errors->first() }}
                 </div>
+            @endif
+
+            <div class="action-header">
+                <form class="table-filters" method="GET" action="{{ route('admin.kategori.index') }}">
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari kategori...">
+                    <button class="btn-excel" type="submit">Cari</button>
+                    @if ($search !== '')
+                        <a class="btn-reset-link" href="{{ route('admin.kategori.index') }}">Reset</a>
+                    @endif
+                </form>
                 <div class="buttons">
                     <button class="btn-add" type="button" onclick="toggleModal('modalTambahKategori', true)">+ Tambah
                         Kategori</button>
@@ -41,43 +50,58 @@
                         <tr>
                             <th style="width: 80px;">No</th>
                             <th>Nama Kategori</th>
-                            <th>Deskripsi</th>
-                            <th style="width: 150px;">Aksi</th>
+                            <th>Kode</th>
+                            <th style="width: 130px;">Jumlah Produk</th>
+                            <th style="width: 170px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($categories as $index => $cat)
+                        @forelse ($categories as $category)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td><strong>{{ $cat['nama'] }}</strong></td>
-                                <td>{{ $cat['deskripsi'] }}</td>
+                                <td>{{ $categories->firstItem() + $loop->index }}</td>
+                                <td><strong>{{ $category->name }}</strong></td>
+                                <td>{{ $category->code }}</td>
+                                <td>{{ $category->products_count }}</td>
                                 <td>
                                     <button class="btn-icon" type="button"
-                                        onclick="openEditModal({{ $cat['id'] }}, '{{ $cat['nama'] }}', '{{ $cat['deskripsi'] }}')">Edit</button>
-                                    <button class="btn-icon delete" type="button">Hapus</button>
+                                        onclick="openEditModal('{{ route('admin.kategori.update', $category) }}', @js($category->name))">Edit</button>
+                                    <form class="inline-form" method="POST"
+                                        action="{{ route('admin.kategori.destroy', $category) }}"
+                                        onsubmit="return confirm('Hapus kategori {{ $category->name }}? Produk di kategori ini juga ikut terhapus.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn-icon delete" type="submit">Hapus</button>
+                                    </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="5" class="empty-table">Belum ada kategori.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+
+            @if ($categories->hasPages())
+                <div class="table-footer-info">
+                    {{ $categories->links() }}
+                </div>
+            @endif
         </main>
 
-        <!-- Modal Tambah Kategori -->
         <div id="modalTambahKategori" class="modal">
             <div class="modal-content modal-medium">
                 <div class="modal-header">
                     <h2>Tambah Kategori Baru</h2>
                     <span class="close" onclick="toggleModal('modalTambahKategori', false)">&times;</span>
                 </div>
-                <form class="modal-form">
+                <form class="modal-form" method="POST" action="{{ route('admin.kategori.store') }}">
+                    @csrf
                     <div class="form-group full">
-                        <label>Nama Kategori *</label>
-                        <input type="text" placeholder="Contoh: Makanan">
-                    </div>
-                    <div class="form-group full">
-                        <label>Deskripsi</label>
-                        <textarea rows="3" placeholder="Penjelasan singkat kategori..."></textarea>
+                        <label for="category-name">Nama Kategori *</label>
+                        <input id="category-name" name="name" type="text" value="{{ old('name') }}"
+                            placeholder="Contoh: Makanan" required>
                     </div>
                     <div class="modal-footer-flex">
                         <button type="button" class="btn-batal-outline"
@@ -88,22 +112,18 @@
             </div>
         </div>
 
-        <!-- Modal Edit Kategori -->
         <div id="modalEditKategori" class="modal">
             <div class="modal-content modal-medium">
                 <div class="modal-header">
                     <h2>Edit Kategori</h2>
                     <span class="close" onclick="toggleModal('modalEditKategori', false)">&times;</span>
                 </div>
-                <form class="modal-form">
-                    <input type="hidden" id="edit-cat-id">
+                <form id="formEditKategori" class="modal-form" method="POST">
+                    @csrf
+                    @method('PUT')
                     <div class="form-group full">
-                        <label>Nama Kategori *</label>
-                        <input type="text" id="edit-cat-nama">
-                    </div>
-                    <div class="form-group full">
-                        <label>Deskripsi</label>
-                        <textarea id="edit-cat-deskripsi" rows="3"></textarea>
+                        <label for="edit-cat-nama">Nama Kategori *</label>
+                        <input type="text" id="edit-cat-nama" name="name" required>
                     </div>
                     <div class="modal-footer-flex">
                         <button type="button" class="btn-batal-outline"
@@ -121,14 +141,12 @@
             modal.style.display = show ? 'flex' : 'none';
         }
 
-        function openEditModal(id, nama, deskripsi) {
-            document.getElementById('edit-cat-id').value = id;
+        function openEditModal(action, nama) {
+            document.getElementById('formEditKategori').action = action;
             document.getElementById('edit-cat-nama').value = nama;
-            document.getElementById('edit-cat-deskripsi').value = deskripsi;
             toggleModal('modalEditKategori', true);
         }
 
-        // Close modal when clicking outside
         window.onclick = function (event) {
             if (event.target.className === 'modal') {
                 event.target.style.display = 'none';
