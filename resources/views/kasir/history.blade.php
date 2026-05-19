@@ -19,7 +19,7 @@
                     <section class="transaction-container shadow-sm">
                         <div class="transaction-header">
                             <h2>Riwayat Transaksi</h2>
-                            <p>Daftar contoh transaksi statis.</p>
+                            <p>Daftar transaksi dari kasir.</p>
                         </div>
 
                         <div class="table-responsive">
@@ -32,36 +32,36 @@
                                         <th>Total Tagihan</th>
                                         <th>Metode Bayar</th>
                                         <th>Status</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="fw-bold">ORD-STATIC-001</td>
-                                        <td class="text-muted">06 Mei 2026, 09:18</td>
-                                        <td><span class="badge-item">3 Item</span></td>
-                                        <td class="fw-bold text-success">Rp 32.000</td>
-                                        <td>Tunai</td>
-                                        <td><span class="status-lunas">Lunas</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">ORD-STATIC-002</td>
-                                        <td class="text-muted">06 Mei 2026, 10:42</td>
-                                        <td><span class="badge-item">2 Item</span></td>
-                                        <td class="fw-bold text-success">Rp 23.000</td>
-                                        <td>QRIS</td>
-                                        <td><span class="status-lunas">Lunas</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">ORD-STATIC-003</td>
-                                        <td class="text-muted">06 Mei 2026, 13:05</td>
-                                        <td><span class="badge-item">5 Item</span></td>
-                                        <td class="fw-bold text-success">Rp 58.000</td>
-                                        <td>Tunai</td>
-                                        <td><span class="status-lunas">Lunas</span></td>
-                                    </tr>
+                                    @forelse ($orders as $order)
+                                        <tr>
+                                            <td class="fw-bold">{{ $order->order_number }}</td>
+                                            <td class="text-muted">{{ $order->created_at->format('d/m/Y H:i') }}</td>
+                                            <td><span class="badge-item">{{ $order->items->sum('quantity') }} Item</span></td>
+                                            <td class="fw-bold text-success">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                            <td>{{ $order->payment_method }}</td>
+                                            <td><span class="status-lunas">Lunas</span></td>
+                                            <td>
+                                                <a class="btn-secondary" href="{{ route('kasir.orders.receipt', $order->id) }}">Struk</a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-muted">Belum ada transaksi.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
+
+                        @if ($orders->hasPages())
+                            <div class="table-footer-info">
+                                {{ $orders->links() }}
+                            </div>
+                        @endif
                     </section>
                 </div>
             </main>

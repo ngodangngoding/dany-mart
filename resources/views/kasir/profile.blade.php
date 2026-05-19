@@ -22,29 +22,47 @@
                             <p class="page-subtitle">Lihat dan lengkapi detail data diri khusus untuk operator kasir.</p>
                         </div>
 
-                        <form class="profile-form">
+                        @if (session('success'))
+                            <div style="background:#eef9f1;border:1px solid #71a32a;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#4a6b1c;font-size:14px;font-weight:500;">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if ($errors->any())
+                            <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#dc2626;font-size:14px;font-weight:500;">
+                                {{ $errors->first() }}
+                            </div>
+                        @endif
+
+                        <form class="profile-form" method="POST" action="{{ route('kasir.profile.update') }}">
+                            @csrf
+                            @method('PUT')
                             <div class="profile-hero">
-                                <div class="initial-avatar">K</div>
+                                @if ($user->photo)
+                                    <img src="{{ asset('storage/' . $user->photo) }}" class="initial-avatar" style="object-fit:cover;" alt="Foto profil">
+                                @else
+                                    <div class="initial-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+                                @endif
                                 <div>
-                                    <h3>Kasir Utama</h3>
-                                    <p class="muted">Kode ID: <strong>KSR-001</strong></p>
+                                    <h3>{{ $user->name }}</h3>
+                                    <p class="muted">Role: <strong style="text-transform:uppercase;">{{ $user->role }}</strong></p>
                                 </div>
                             </div>
 
                             <div class="profile-grid">
                                 <div class="field">
                                     <label for="profile-name">Nama Lengkap</label>
-                                    <input id="profile-name" type="text" value="Kasir Utama" class="input" placeholder="Masukkan nama lengkap">
+                                    <input id="profile-name" name="name" type="text" value="{{ old('name', $user->name) }}" class="input" placeholder="Masukkan nama lengkap" required>
                                 </div>
                                 <div class="field">
                                     <label for="profile-email">Email Valid</label>
-                                    <input id="profile-email" type="email" value="kasir@danymart.com" class="input" placeholder="contoh@email.com">
+                                    <input id="profile-email" name="email" type="email" value="{{ old('email', $user->email) }}" class="input" placeholder="contoh@email.com" required>
                                 </div>
                             </div>
 
                             <div class="field">
                                 <label for="profile-username">Username Login</label>
-                                <input id="profile-username" type="text" value="kasir" class="input" readonly>
+                                <input id="profile-username" type="text" value="{{ $user->username }}" class="input" readonly style="background:#f9fafb;cursor:not-allowed;color:#6b7280;">
                             </div>
 
                             <div class="security-note">
@@ -60,7 +78,7 @@
                             </div>
 
                             <div class="form-actions">
-                                <button type="button" class="dark-button">Simpan Perubahan</button>
+                                <button type="submit" class="dark-button">Simpan Perubahan</button>
                             </div>
                         </form>
                     </section>

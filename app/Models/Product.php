@@ -10,12 +10,10 @@ class Product extends Model
         'category_id',
         'code',
         'name',
-        'description',
         'unit',
         'purchase_price',
         'selling_price',
-        'stock',
-        'min_stock'
+        'stock'
     ];
 
     protected static function booted()

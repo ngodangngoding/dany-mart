@@ -16,12 +16,10 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->string('code')->unique();
             $table->string('name');
-            $table->text('description')->nullable();
-            $table->string('unit');
+            $table->enum('unit', ['pcs', 'kg', 'L', 'ml', 'pack', 'dus', 'btl', 'sachet', 'renceng']);
             $table->integer('purchase_price');
             $table->integer('selling_price');
             $table->integer('stock');
-            $table->integer('min_stock')->default(0);
             $table->timestamps();
         });
     }

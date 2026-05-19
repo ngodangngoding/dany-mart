@@ -13,7 +13,7 @@ class Order extends Model
         'payment_method',
         'payment_amount',
         'change_amount',
-        'status'
+        'order_date',
     ];
 
     public function user()

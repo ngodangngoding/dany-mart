@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('payment_method', ['Tunai', 'QRIS']);
             $table->integer('payment_amount');
             $table->integer('change_amount');
-            $table->enum('status', ['Lunas', 'Pending', 'Batal']);
+            $table->date('order_date');
             $table->timestamps();
         });
     }

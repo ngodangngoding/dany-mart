@@ -4,19 +4,20 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class PreviewRoleMiddleware
 {
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        $activeRole = $request->session()->get('preview_role');
-
-        if (! $activeRole) {
+        if (! Auth::check()) {
             return redirect()->route('login.preview');
         }
 
-        abort_unless($activeRole === $role, 403);
+        if (Auth::user()->role !== $role) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
 
         return $next($request);
     }

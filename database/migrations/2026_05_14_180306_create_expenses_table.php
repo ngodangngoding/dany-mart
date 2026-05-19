@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->date('date');
-            $table->string('expense_category');
+            $table->enum('expense_category', ['Listrik', 'Gaji', 'Perlengkapan', 'Sewa']);
             $table->text('description')->nullable();
             $table->integer('amount');
             $table->timestamps();
