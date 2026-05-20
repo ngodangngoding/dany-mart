@@ -1298,3 +1298,261 @@ svg {
         font-size: 1.6rem;
     }
 }
+
+/* Layout scroll */
+.dashboard-shell {
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.kasir-dashboard-container {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.kasir-dashboard-container .main-content {
+    height: 100vh;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 2rem;
+}
+
+.kasir-dashboard-container .cart-panel {
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+    padding: 30px 20px;
+    background: #ffffff;
+    border-left: 1px solid var(--color-border);
+}
+
+/* Ukuran sedang untuk tombol plus produk */
+.add-button,
+[data-product-grid] .card button,
+[data-product-grid] .product-card button {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+
+    border-radius: 10px !important;
+    padding: 0 !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+}
+
+/* Biar posisi tetap enak di card */
+.add-button {
+    right: 26px !important;
+    bottom: 26px !important;
+}
+
+/* Kalau plus pakai svg/icon */
+.add-button svg,
+[data-product-grid] .card button svg,
+[data-product-grid] .product-card button svg {
+    width: 18px !important;
+    height: 18px !important;
+}
+
+/* Cadangan kalau tombol plus dari JS tidak kena class */
+[data-product-grid] .card button,
+[data-product-grid] .product-card button {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: var(--color-primary) !important;
+    color: #ffffff !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-size: 30px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+}
+
+.add-button > *,
+[data-product-grid] .card button > *,
+[data-product-grid] .product-card button > * {
+    width: 100%;
+    height: 100%;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+/* Item dipilih rapi + scroll */
+.cart-card {
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+.cart-content {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 14px;
+}
+
+.cart-list {
+    min-height: 0;
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 4px;
+    padding-bottom: 6px;
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: start;
+
+    border: 1px solid #e8eaee;
+    border-radius: 16px;
+    background: #ffffff;
+    padding: 16px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.qty-controls {
+    display: grid;
+    grid-template-columns: 20px 18px 20px;
+    align-items: center;
+    justify-content: end;
+    gap: 4px;
+}
+
+.qty-button {
+    width: 20px;
+    height: 20px;
+    border: 0;
+    background: transparent;
+    color: #475569;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.delete-button {
+    width: 24px;
+    height: 24px;
+    margin-top: 6px;
+    margin-left: auto;
+    border: 0;
+    background: transparent;
+    color: var(--color-danger);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+/* Responsive */
+@media (max-width: 1180px) {
+    .dashboard-shell {
+        overflow: auto;
+    }
+
+    .kasir-dashboard-container {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+    }
+
+    .kasir-dashboard-container .main-content,
+    .kasir-dashboard-container .cart-panel {
+        height: auto;
+        overflow: visible;
+    }
+
+    .cart-content {
+        height: auto;
+    }
+
+    .cart-list {
+        max-height: 420px;
+    }
+}
+
+.kasir-dashboard-container {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.kasir-dashboard-container .main-content {
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.kasir-dashboard-container .top-bar,
+.kasir-dashboard-container .search-section,
+.kasir-dashboard-container .filter-bar {
+    flex-shrink: 0;
+}
+
+.kasir-dashboard-container .product-grid {
+    flex: 1;
+    min-height: 0;
+    overflow-y: scroll;
+    padding-right: 8px;
+    padding-bottom: 32px;
+    align-content: start;
+}
+
+.kasir-dashboard-container .product-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.kasir-dashboard-container .product-grid::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #d6dde6;
+}
+
+.kasir-dashboard-container .product-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.kasir-dashboard-container .product-grid {
+    scrollbar-width: thin;
+    scrollbar-color: #d6dde6 transparent;
+}
